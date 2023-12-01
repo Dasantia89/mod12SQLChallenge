@@ -1,7 +1,10 @@
+// Require needed npm modules
 const mysql = require('mysql2');
 require('dotenv').config();
 var inquirer = require('inquirer');
 const { printTable } = require('console-table-printer');
+
+// Questions for inquirer
 const questions = [
     {
         type: 'list',
@@ -12,7 +15,7 @@ const questions = [
 ];
 
 
-
+// Ask questions, receive answers, and formulate and run queries based on them. Then display the results
 async function init() {
     var query;
     var isDisplayed = false;
@@ -39,6 +42,8 @@ async function init() {
         const answers2 = await inquirer.prompt([{ type: 'input', name: 'dept', message: 'What is the name of the department you want to add?' }])
         query = `INSERT INTO departments (name) VALUES ("${answers2.dept}");`
         console.log('Department added.')
+        db.end();
+        return;
     } else if (answers.choice == 'Add a role') {
         var depts;
         db.query('SELECT name FROM departments;', function (err, results) {
@@ -51,14 +56,14 @@ async function init() {
         var deptQuery = `SELECT id FROM departments WHERE name = "${answers4.dept}";`;
         db.query(deptQuery, function (err, results) {
             query = `INSERT INTO roles (title, salary, department_id) VALUES ("${answers2.name}",${answers3.salary},${results[0].id});`;
-            console.log(query);
             db.query(query, function (err, results, fields) {
                 console.log('Role added.')
             });
         })
-
+        db.end();
+        return;
     }
-
+    // For simple select statements only
     if (isDisplayed) {
         db.query(query, function (err, results) {
             printTable(results);
