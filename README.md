@@ -9,9 +9,9 @@ This project was created to simulate a content management system in which the us
 - [Questions](#questions)
 - [Usage Information](#usage-information)
 ## Installation
-Open git bash. Type the command 'npm i'. Then type 'Node index.js'
+Open git bash. Type the command 'npm i'. Log into mysql and run the db/schema.sql and seed.sql queries to create and seed the database. Then type 'Node index.js'
 ## Usage Information 
-https://watch.screencastify.com/v/GuBwGvnYIGFIi83376ZX
+https://watch.screencastify.com/v/bIDssPlwBg19KA3wu5g5
 ## License 
 This project is covered under the MIT license.   https://opensource.org/licenses/MIT
 
