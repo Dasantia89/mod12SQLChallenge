@@ -1,7 +1,7 @@
 # SQL Challenge   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 Employee Tracker
 ## Description
-This project was created to simulate a content management system in which the user can view data from a database, and new data to it .
+This project was created to simulate a content management system in which the user can view data from a database, add new data to it, and update old data in it. It uses the Inquirer package to get user input, dotenv package to store credentials, mysql2 package to connect to and utilize a database, and the console-table-printer package to display data in a table format.
 
   ## Table of Contents<br>
   - [Installation](#installation)
