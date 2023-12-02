@@ -9,7 +9,7 @@ This project was created to simulate a content management system in which the us
 - [Questions](#questions)
 - [Usage Information](#usage-information)
 ## Installation
-Open git bash. Type the command 'npm i'. Log into mysql and run the db/schema.sql and seed.sql queries to create and seed the database. Then type 'Node index.js'
+Open git bash. Type the command 'npm i'. Create a .env file and store your myqel username, password, and database name (employee_db) in the variables DB_USER, DB_PASSWORD, and DB_NAME. Log into mysql and run the db/schema.sql and seed.sql queries to create and seed the database. Then type 'Node index.js'
 ## Usage Information 
 https://watch.screencastify.com/v/bIDssPlwBg19KA3wu5g5
 ## License 
