@@ -10,7 +10,7 @@ const questions = [
         type: 'list',
         name: 'choice',
         message: 'What do you want to do?',
-        choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role']
+        choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee']
     }
 ];
 
@@ -66,7 +66,33 @@ async function init() {
         console.log('Role added.')
         db.end();
         return;
-    } 
+    }   else if (answers.choice == 'Add an employee') {
+        var [results] = await db.query('SELECT title FROM roles;');
+        var roles = results.map((role)=>role.title);
+        var [results] = await db.query('SELECT first_name, last_name FROM employees WHERE manager_id IS NULL;');
+        var leads = results.map((name)=>name.first_name + ' ' + name.last_name);
+
+        
+
+        const answers2 = await inquirer.prompt([{ type: 'input', name: 'first', message: 'What is the first name of the employee?' }])
+        const answers3 = await inquirer.prompt([{ type: 'input', name: 'last', message: 'What is the last name of the employee?' }])
+        const answers4 = await inquirer.prompt([{ type: 'list', name: 'role', message: 'What is the role of the employee?', choices: roles }])
+        const answers5 = await inquirer.prompt([{ type: 'list', name: 'manager', message: 'Who is the manager of the employee?', choices: leads }])
+
+
+        var names = answers5.manager.split(' ');
+        var first = names[0];
+        var last = names[1];
+        var [results] = await db.query(`SELECT id FROM roles WHERE title = "${answers4.role}";`);
+        var roleId = results[0].id;
+        var [results] = await db.query(`SELECT id FROM employees WHERE first_name = "${first}" AND last_name = "${last}";`);
+        var managerId = results[0].id;
+
+        await db.query(`INSERT INTO employees (first_name,last_name,role_id,manager_id) VALUES ("${answers2.first}", "${answers3.last}", ${roleId}, ${managerId});`);
+        console.log('Employee added.');
+        db.end();
+        return;
+    }
   
 
 
