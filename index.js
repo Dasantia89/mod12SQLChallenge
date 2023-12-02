@@ -9,8 +9,8 @@ const questions = [
     {
         type: 'list',
         name: 'choice',
-        message: 'What shape should the logo have?',
-        choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', 'Quit']
+        message: 'What do you want to do?',
+        choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role']
     }
 ];
 
