@@ -10,7 +10,7 @@ const questions = [
         type: 'list',
         name: 'choice',
         message: 'What do you want to do?',
-        choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee']
+        choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role']
     }
 ];
 
@@ -90,6 +90,23 @@ async function init() {
 
         await db.query(`INSERT INTO employees (first_name,last_name,role_id,manager_id) VALUES ("${answers2.first}", "${answers3.last}", ${roleId}, ${managerId});`);
         console.log('Employee added.');
+        db.end();
+        return;
+    }else{
+        const answers2 = await inquirer.prompt([{ type: 'input', name: 'name', message: "What is the name of the employee who's role you want to change?" }]);
+        var names = answers2.name.split(' ');
+        var first = names[0];
+        var last = names[1];
+        var [results] = await db.query(`SELECT id FROM employees where first_name = "${first}" AND last_name = "${last}";`); 
+        var empId = results[0].id;
+
+        var [results] = await db.query('SELECT title FROM roles;'); 
+        var roles = results.map((role)=>role.title);
+        const answers3 = await inquirer.prompt([{ type: 'list', name: 'role', message: "What do you want to cahnge the employee's role to?", choices: roles }]);
+        var [results] = await db.query(`SELECT id FROM roles where title = "${answers3.role}";`); 
+        var roleId = results[0].id;
+        await db.query(`UPDATE employees SET role_id = ${roleId} WHERE id = ${empId};`);
+        console.log('Employee role updated.');
         db.end();
         return;
     }
