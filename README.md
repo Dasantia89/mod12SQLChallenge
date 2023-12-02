@@ -10,7 +10,7 @@ This project was created to simulate a content management system in which the us
 - [Usage Information](#usage-information)
 ## Installation
 Open git bash. Type the command 'npm i'. Then type 'Node index.js'
-## Usage Instructions
+## Usage Information 
 https://watch.screencastify.com/v/GuBwGvnYIGFIi83376ZX
 ## License 
 This project is covered under the MIT license.   https://opensource.org/licenses/MIT
