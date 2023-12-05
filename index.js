@@ -10,7 +10,7 @@ const questions = [
         type: 'list',
         name: 'choice',
         message: 'What do you want to do?',
-        choices: ['View all departments', 'View all roles', 'View all employees', 'View employees by manager','Add a department', 'Add a role', 'Add an employee', 'Update an employee role', 'Quit']
+        choices: ['View all departments', 'View all roles', 'View all employees', 'View employees by manager', 'View employees by department', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', 'Quit']
     }
 ];
 console.log('Employee Management System');
@@ -30,7 +30,7 @@ async function init() {
         waitForConnections: true
     });
 
-    // Form the simple select queries
+    // Form the select queries
     if (answers.choice == 'View all departments') {
         query = 'SELECT * FROM departments;';
         isSelectQuery = true;
@@ -39,6 +39,23 @@ async function init() {
         isSelectQuery = true;
     } else if (answers.choice == 'View all employees') {
         query = 'SELECT * FROM employees;';
+        isSelectQuery = true;
+    } else if (answers.choice == "View employees by manager") {
+        var [results] = await db.query('SELECT first_name, last_name, id FROM employees WHERE manager_id IS NULL;');
+        var leads = results.map((name) => name.id + ' ' + name.first_name + ' ' + name.last_name);
+
+        const answers2 = await inquirer.prompt({ type: 'list', name: 'empMan', message: "Which manager's employees would you like to view?", choices: leads });
+        var manager = answers2.empMan.split(' ');
+        var id = manager[0];
+        query = (`SELECT * FROM employees WHERE manager_id = ${id};`);
+        isSelectQuery = true;
+    } else if (answers.choice == "View employees by department") {
+        var [results] = await db.query('SELECT * FROM departments;');
+        depts = results.map(dept=>dept.id + ' ' + dept.name)
+        const answers2 = await inquirer.prompt({ type: 'list', name: 'dept', message: "Which department's employees would you like to view?", choices: depts });
+        var dept = answers2.dept.split(' ');
+        var id = dept[0];
+        query = (`SELECT departments.name AS 'Department', roles.title AS 'Role', employees.first_name AS 'First name', employees.last_name AS 'Last name' FROM departments JOIN roles ON departments.id = roles.department_id JOIN employees ON roles.id = employees.role_id WHERE departments.id = ${id};`);
         isSelectQuery = true;
     }
     // Get the name of the department and add it to the departments table
@@ -92,9 +109,9 @@ async function init() {
         await db.query(`INSERT INTO employees (first_name,last_name,role_id,manager_id) VALUES ("${answers2.first}", "${answers3.last}", ${roleId}, ${managerId});`);
         console.log('Employee added.');
         db.end();
-    } 
-        // Get employee name. Get employee id from the name. Get all role titles. Get updated role. Form and run query. 
-        else if (answers.choice == "Update an employee role") {
+    }
+    // Get employee name. Get employee id from the name. Get all role titles. Get updated role. Form and run query. 
+    else if (answers.choice == "Update an employee role") {
         const answers2 = await inquirer.prompt([{ type: 'input', name: 'name', message: "What is the name of the employee who's role you want to change?" }]);
         var names = answers2.name.split(' ');
         var first = names[0];
@@ -110,18 +127,9 @@ async function init() {
         await db.query(`UPDATE employees SET role_id = ${roleId} WHERE id = ${empId};`);
         console.log('Employee role updated.');
         db.end();
-    } else if (answers.choice == "View employees by manager"){
-        var [results] = await db.query('SELECT first_name, last_name, id FROM employees WHERE manager_id IS NULL;');
-        var leads = results.map((name) => name.id + ' ' + name.first_name + ' ' + name.last_name);
-
-        const answers2 = await inquirer.prompt({ type: 'list', name: 'empMan', message: "Which manager's employees would you like to view?", choices: leads});
-        var manager = answers2.empMan.split(' ');
-        var id = manager[0];
-        query = (`SELECT * FROM employees WHERE manager_id = ${id};`);
-        isSelectQuery = true;
-    }
-        // Quit option was selected
-        else {
+    } 
+    // Quit option was selected
+    else {
         return;
     }
 
