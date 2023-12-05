@@ -10,7 +10,7 @@ const questions = [
         type: 'list',
         name: 'choice',
         message: 'What do you want to do?',
-        choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', 'Quit']
+        choices: ['View all departments', 'View all roles', 'View all employees', 'View employees by manager','Add a department', 'Add a role', 'Add an employee', 'Update an employee role', 'Quit']
     }
 ];
 console.log('Employee Management System');
@@ -110,7 +110,16 @@ async function init() {
         await db.query(`UPDATE employees SET role_id = ${roleId} WHERE id = ${empId};`);
         console.log('Employee role updated.');
         db.end();
-    } 
+    } else if (answers.choice == "View employees by manager"){
+        var [results] = await db.query('SELECT first_name, last_name, id FROM employees WHERE manager_id IS NULL;');
+        var leads = results.map((name) => name.id + ' ' + name.first_name + ' ' + name.last_name);
+
+        const answers2 = await inquirer.prompt({ type: 'list', name: 'empMan', message: "Which manager's employees would you like to view?", choices: leads});
+        var manager = answers2.empMan.split(' ');
+        var id = manager[0];
+        query = (`SELECT * FROM employees WHERE manager_id = ${id};`);
+        isSelectQuery = true;
+    }
         // Quit option was selected
         else {
         return;
