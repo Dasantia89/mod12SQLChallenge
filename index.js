@@ -10,7 +10,7 @@ const questions = [
         type: 'list',
         name: 'choice',
         message: 'What do you want to do?',
-        choices: ['View all departments', 'View all roles', 'View all employees', 'View employees by manager', 'View employees by department', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', 'Quit']
+        choices: ['View all departments', 'View all roles', 'View all employees', 'View employees by manager', 'View employees by department', 'View budget of department', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', 'Quit']
     }
 ];
 console.log('Employee Management System');
@@ -127,13 +127,22 @@ async function init() {
         await db.query(`UPDATE employees SET role_id = ${roleId} WHERE id = ${empId};`);
         console.log('Employee role updated.');
         db.end();
-    } 
+    }  else if (answers.choice == 'View budget of department') {
+        var [results] = await db.query('SELECT * FROM departments;');
+        depts = results.map(dept=>dept.id + ' ' + dept.name)
+        const answers2 = await inquirer.prompt({ type: 'list', name: 'dept', message: "Which department budget would you like to view?", choices: depts });
+        var dept = answers2.dept.split(' ');
+        var id = dept[0];
+        
+        query = `SELECT departments.name AS 'Department', SUM(roles.salary) AS 'Budget' FROM departments JOIN roles ON departments.id = roles.department_id WHERE departments.id = ${id}`;
+        isSelectQuery = true;
+    }
     // Quit option was selected
     else {
         return;
     }
 
-    // simple select query was selected
+    // select query was selected
     if (isSelectQuery) {
         var results = await db.query(query)
         printTable(results[0]);
